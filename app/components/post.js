@@ -2,11 +2,11 @@ import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-const PostCard = ({ id, imageUrl, title, excerpt, darkMode }) => {
+const PostCard = ({ _id, imageUrl, title, excerpt, darkMode }) => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/posts/${id}`);
+    router.push(`/pages/posts/${_id}`);
   };
 
   return (
@@ -17,13 +17,7 @@ const PostCard = ({ id, imageUrl, title, excerpt, darkMode }) => {
       onClick={handleClick}
     >
       <div className="w-full h-48 relative">
-        <Image
-          src={imageUrl}
-          alt={title}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
+        <img src={imageUrl} alt={title} className="w-full h-48 object-cover" />
       </div>
       <div className="p-6">
         <h3
