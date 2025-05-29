@@ -62,13 +62,13 @@ const HomePage = () => {
   }, []);
 
   const handleLoginRedirect = () => {
-    router.push("/pages/login");
+    router.push("login");
   };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     setUser(null);
-    router.push("/login");
+    router.push("login");
   };
 
   const toggleDarkMode = () => {
