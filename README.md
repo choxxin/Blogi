@@ -140,8 +140,8 @@ npm run build
 
 ## Screenshots
 
-![Alt Text](/Blogi/my-app/public/1.png)
-![Alt Text](/Blogi/my-app/public/2.png)
+![Login Page](/1.png)
+![Register Page](/2.png)
 
 ### Authentication Flow
 
