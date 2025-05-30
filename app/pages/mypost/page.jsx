@@ -49,7 +49,7 @@ export default function UserPostsPage() {
   };
 
   const handleEdit = (post) => {
-    router.push(`/pages/postform?edit=${post._id}`);
+    router.push(`/pages/editpost/${post._id}`);
   };
 
   if (loading) return <div>Loading...</div>;
