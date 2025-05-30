@@ -74,7 +74,9 @@ const HomePage = () => {
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
-
+  const handlemypost = () => {
+    router.push("/pages/mypost");
+  };
   if (loading) {
     return (
       <div
@@ -140,6 +142,12 @@ const HomePage = () => {
               <span className={darkMode ? "text-gray-300" : "text-gray-700"}>
                 Welcome, {user.username}!
               </span>
+              <button
+                onClick={handlemypost}
+                className="px-4 py-2 rounded-md transition bg-indigo-600 hover:bg-indigo-700 text-white"
+              >
+                MyPost
+              </button>
               <button
                 onClick={handleLogout}
                 className="px-4 py-2 rounded-md transition bg-indigo-600 hover:bg-indigo-700 text-white"
