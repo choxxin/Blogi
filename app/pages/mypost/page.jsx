@@ -6,7 +6,7 @@ import UserPostCard from "../../components/userpostcard";
 
 export default function UserPostsPage() {
   const router = useRouter();
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true); // Default to dark mode for a darker vibe
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,7 +30,7 @@ export default function UserPostsPage() {
     };
 
     fetchUserPosts();
-  }, []);
+  }, [router]); // Added router to dependency array
 
   const handleDelete = async (postId) => {
     try {
@@ -52,36 +52,65 @@ export default function UserPostsPage() {
     router.push(`/pages/editpost/${post._id}`);
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div
+        className={`min-h-screen flex items-center justify-center ${
+          darkMode ? "bg-gray-950 text-gray-200" : "bg-gray-50 text-gray-800"
+        }`}
+      >
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-500"></div>
+        <p className="ml-4 text-xl">Loading your thoughts...</p>
+      </div>
+    );
 
   return (
-    <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-50"}`}>
-      <header className={`p-4 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+    <div
+      className={`min-h-screen transition-colors duration-300 ${
+        darkMode ? "bg-gray-950 text-gray-200" : "bg-gray-50 text-gray-800"
+      }`}
+    >
+      <header
+        className={`p-4 shadow-lg transition-colors duration-300 ${
+          darkMode
+            ? "bg-gray-900 border-b border-gray-700"
+            : "bg-white border-b border-gray-200"
+        }`}
+      >
         <div className="flex justify-between items-center max-w-7xl mx-auto">
           <button
             onClick={() => router.back()}
-            className="px-4 py-2 rounded bg-gray-200"
-          >
-            Back
-          </button>
-          <h1
-            className={`text-xl font-bold ${
-              darkMode ? "text-white" : "text-black"
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              darkMode
+                ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
             }`}
           >
-            My Posts
+            ← Back
+          </button>
+          <h1
+            className={`text-3xl font-extrabold tracking-tight ${
+              darkMode ? "text-indigo-400" : "text-indigo-600"
+            }`}
+          >
+            My Creations
           </h1>
           <button
             onClick={() => setDarkMode(!darkMode)}
-            className="p-2 rounded-full bg-gray-200"
+            className={`p-3 rounded-full text-lg transition-all duration-200 ${
+              darkMode
+                ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+            aria-label="Toggle dark mode"
           >
             {darkMode ? "☀️" : "🌙"}
           </button>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <main className="max-w-7xl mx-auto p-6 md:p-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {posts.map((post) => (
             <UserPostCard
               key={post._id}
@@ -94,15 +123,28 @@ export default function UserPostsPage() {
         </div>
 
         {posts.length === 0 && (
-          <div className="text-center py-12">
-            <p className={darkMode ? "text-gray-400" : "text-gray-600"}>
-              You haven't created any posts yet.
+          <div
+            className={`text-center py-16 rounded-xl border-dashed border-2 ${
+              darkMode
+                ? "border-gray-700 bg-gray-900 text-gray-400"
+                : "border-gray-300 bg-white text-gray-600"
+            } mt-12`}
+          >
+            <p className="text-xl font-semibold mb-4">
+              It seems you haven't shared anything yet.
+            </p>
+            <p className="mb-6">
+              Start creating your first post and let your ideas shine!
             </p>
             <button
               onClick={() => router.push("/pages/postform")}
-              className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded"
+              className={`px-6 py-3 text-lg font-bold rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 ${
+                darkMode
+                  ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-500/30"
+                  : "bg-indigo-500 text-white hover:bg-indigo-600 shadow-indigo-500/30"
+              }`}
             >
-              Create Post
+              Create Your First Post →
             </button>
           </div>
         )}

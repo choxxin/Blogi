@@ -14,6 +14,8 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  // Explicitly set for this page to control its dark mode behavior independently
+  const [darkMode, setDarkMode] = useState(true);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,24 +48,23 @@ const LoginPage = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Something went wrong");
+        throw new Error(data.error || "An unexpected error occurred.");
       }
 
       if (isLogin) {
-        // Store user data and redirect for login
         if (data.user) {
           localStorage.setItem("user", JSON.stringify(data.user));
+          // Using toast/notification library for non-blocking feedback is better than alert
+          // For now, keep alert as per existing code, but ideal for a project.
+          alert("Login successful!");
+          router.push("/pages/home");
+        } else {
+          throw new Error("Login successful but no user data received.");
         }
-        router.push("/pages/home");
       } else {
-        // For registration, show success and switch to login
         setRegistrationSuccess(true);
-        setIsLogin(true);
-        setFormData({
-          name: "",
-          username: "",
-          password: "",
-        });
+        setFormData({ name: "", username: "", password: "" }); // Clear form
+        setIsLogin(true); // Switch to login view
       }
     } catch (err) {
       setError(err.message);
@@ -73,30 +74,65 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md w-full max-w-md border dark:border-gray-700">
-        <h1 className="text-2xl font-bold text-center mb-6 text-indigo-600 dark:text-indigo-400">
-          {isLogin ? "Login to Blogi" : "Create an Account"}
+    <div
+      className={`min-h-screen flex items-center justify-center p-4 transition-colors duration-300 ${
+        darkMode ? "bg-gray-950 text-gray-100" : "bg-gray-50 text-gray-800"
+      }`}
+    >
+      <div
+        className={`bg-gray-600 p-8 sm:p-10 rounded-2xl shadow-xl border transition-colors duration-300 transform scale-100
+          ${
+            darkMode
+              ? "bg-gray-900 border-gray-800"
+              : "bg-white border-gray-200"
+          }
+          hover:scale-[1.005] hover:shadow-2xl ${
+            darkMode
+              ? "hover:shadow-indigo-500/20"
+              : "hover:shadow-indigo-300/30"
+          }
+        `}
+      >
+        <h1
+          className={`text-3xl sm:text-4xl font-extrabold text-center mb-8 sm:mb-10 ${
+            darkMode ? "text-indigo-400" : "text-indigo-600"
+          }`}
+        >
+          {isLogin ? "Welcome Back!" : "Join Our Community"}
         </h1>
 
         {registrationSuccess && (
-          <div className="mb-4 p-3 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-100 rounded">
-            Registration successful! Please login.
+          <div
+            className={`mb-6 p-4 rounded-lg text-center font-medium border ${
+              darkMode
+                ? "bg-green-900 border-green-700 text-green-200"
+                : "bg-green-100 border-green-300 text-green-800"
+            }`}
+          >
+            Registration successful! Please login to continue.
           </div>
         )}
 
         {error && (
-          <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100 rounded">
+          <div
+            className={`mb-6 p-4 rounded-lg text-center font-medium border ${
+              darkMode
+                ? "bg-red-900 border-red-700 text-red-200"
+                : "bg-red-100 border-red-300 text-red-800"
+            }`}
+          >
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {!isLogin && (
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                className={`block text-sm font-medium mb-2 ${
+                  darkMode ? "text-gray-300" : "text-gray-700"
+                }`}
               >
                 Full Name
               </label>
@@ -106,8 +142,13 @@ const LoginPage = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                placeholder="John Doe"
+                className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none
+                  ${
+                    darkMode
+                      ? "bg-gray-800 border-gray-700 text-gray-100 placeholder-gray-500"
+                      : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-400"
+                  }`}
+                placeholder="e.g., John Doe"
               />
             </div>
           )}
@@ -115,7 +156,9 @@ const LoginPage = () => {
           <div>
             <label
               htmlFor="username"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              className={`block text-sm font-medium mb-2 ${
+                darkMode ? "text-gray-300" : "text-gray-700"
+              }`}
             >
               Username
             </label>
@@ -125,8 +168,13 @@ const LoginPage = () => {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              placeholder="username"
+              className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none
+                ${
+                  darkMode
+                    ? "bg-gray-800 border-gray-700 text-gray-100 placeholder-gray-500"
+                    : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-400"
+                }`}
+              placeholder="Your chosen username"
               required
             />
           </div>
@@ -134,7 +182,9 @@ const LoginPage = () => {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              className={`block text-sm font-medium mb-2 ${
+                darkMode ? "text-gray-300" : "text-gray-700"
+              }`}
             >
               Password
             </label>
@@ -144,8 +194,13 @@ const LoginPage = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              placeholder="••••••••"
+              className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none
+                ${
+                  darkMode
+                    ? "bg-gray-800 border-gray-700 text-gray-100 placeholder-gray-500"
+                    : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-400"
+                }`}
+              placeholder="Minimum 6 characters"
               required
               minLength={6}
             />
@@ -154,9 +209,14 @@ const LoginPage = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md transition ${
-              isLoading ? "opacity-70 cursor-not-allowed" : ""
-            }`}
+            className={`w-full px-6 py-3 rounded-lg text-lg font-bold shadow-md transition-all duration-300 transform hover:scale-[1.01]
+              ${
+                darkMode
+                  ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-500/30"
+                  : "bg-indigo-500 text-white hover:bg-indigo-600 shadow-indigo-500/30"
+              }
+              ${isLoading ? "opacity-70 cursor-not-allowed" : ""}
+            `}
           >
             {isLoading ? (
               <span className="flex items-center justify-center">
@@ -183,31 +243,41 @@ const LoginPage = () => {
                 Processing...
               </span>
             ) : isLogin ? (
-              "Login"
+              "Login to Your Account"
             ) : (
-              "Sign Up"
+              "Create Your Account"
             )}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
+        <div className="mt-8 text-center">
           <button
             onClick={() => {
               setIsLogin(!isLogin);
               setError("");
               setRegistrationSuccess(false);
+              setFormData({ name: "", username: "", password: "" }); // Clear form data
             }}
-            className="text-indigo-600 dark:text-indigo-400 hover:underline focus:outline-none"
+            className={`text-lg font-medium hover:underline focus:outline-none transition-colors duration-200 ${
+              darkMode
+                ? "text-indigo-400 hover:text-indigo-300"
+                : "text-indigo-600 hover:text-indigo-700"
+            }`}
           >
-            {isLogin
-              ? "Need an account? Sign Up"
-              : "Already have an account? Login"}
+            {isLogin ? "New here? Sign Up" : "Already a member? Login"}
           </button>
         </div>
 
-        <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-          <Link href="/" className="hover:underline">
-            ← Back to home
+        <div className="mt-6 text-center text-sm border-t border-dashed pt-6 ${darkMode ? 'border-gray-800' : 'border-gray-200'}">
+          <Link
+            href="/pages/home"
+            className={`font-medium hover:underline transition-colors duration-200 ${
+              darkMode
+                ? "text-gray-400 hover:text-gray-300"
+                : "text-gray-600 hover:text-gray-700"
+            }`}
+          >
+            ← Back to Home
           </Link>
         </div>
       </div>
