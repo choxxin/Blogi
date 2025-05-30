@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import PostCard from "../../components/post";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-
+import SearchBar from "@/app/components/searchbar";
 // Icons (same as before)
 const SunIcon = () => (
   <svg
@@ -180,8 +180,9 @@ const HomePage = () => {
             : "bg-white border-b border-gray-200"
         }`}
       >
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+          {/* Left section - Logo and dark mode toggle */}
+          <div className="flex items-center space-x-6 w-full md:w-auto">
             <Link href="/" className="flex items-center group">
               <h1
                 className={`text-3xl font-extrabold tracking-tight transition-colors duration-200 ${
@@ -204,7 +205,13 @@ const HomePage = () => {
             </button>
           </div>
 
-          <nav className="flex items-center space-x-4">
+          {/* Middle section - Search bar (now centered and responsive) */}
+          <div className="w-full max-w-xl px-4 md:px-0">
+            <SearchBar darkMode={darkMode} />
+          </div>
+
+          {/* Right section - Navigation buttons */}
+          <nav className="flex items-center space-x-4 w-full md:w-auto justify-end">
             {user ? (
               <>
                 <span
