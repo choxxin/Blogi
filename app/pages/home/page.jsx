@@ -1,15 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
-// Assuming PostCard is in components/PostCard.js and is updated to support dark mode
 import PostCard from "../../components/post";
 import { useRouter } from "next/navigation";
-import Link from "next/link"; // Use Link for navigation where appropriate
+import Link from "next/link";
 
-// Reusing your icons, but consider using a library like Heroicons for more control
+// Icons (same as before)
 const SunIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="h-6 w-6" // Slightly larger for better tap target
+    className="h-6 w-6"
     viewBox="0 0 20 20"
     fill="currentColor"
   >
@@ -24,7 +23,7 @@ const SunIcon = () => (
 const MoonIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="h-6 w-6" // Slightly larger for better tap target
+    className="h-6 w-6"
     viewBox="0 0 20 20"
     fill="currentColor"
   >
@@ -34,47 +33,75 @@ const MoonIcon = () => (
 
 const HomePage = () => {
   const router = useRouter();
-  const [darkMode, setDarkMode] = useState(true); // Default to dark mode
+  const [darkMode, setDarkMode] = useState(true);
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalPosts: 0,
+    postsPerPage: 10,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  });
+  const [isChangingPage, setIsChangingPage] = useState(false);
 
   useEffect(() => {
-    // Check for user in localStorage
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+    fetchPosts(1);
+  }, []);
 
-    // Fetch posts
-    const fetchPosts = async () => {
-      try {
-        const response = await fetch("/api/getallpost");
-        if (!response.ok) {
-          throw new Error("Failed to fetch posts");
-        }
-        const data = await response.json();
-        // Assuming data.posts is the array if wrapped, otherwise data itself
-        setPosts(data.posts || data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const fetchPosts = async (page, limit = pagination.postsPerPage) => {
+    try {
+      if (page !== pagination.currentPage) {
+        setIsChangingPage(true);
       }
-    };
+      setLoading(true);
 
-    fetchPosts();
-  }, []); // Empty dependency array means this runs once on mount
+      const response = await fetch(
+        `/api/getallpost?page=${page}&limit=${limit}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch posts");
+      }
+
+      const data = await response.json();
+      setPosts(data.posts);
+      setPagination(data.pagination);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+      setIsChangingPage(false);
+    }
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.totalPages) {
+      fetchPosts(newPage);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handlePostsPerPageChange = (e) => {
+    const newLimit = Number(e.target.value);
+    setPagination((prev) => ({ ...prev, postsPerPage: newLimit }));
+    fetchPosts(1, newLimit);
+  };
 
   const handleLoginRedirect = () => {
-    router.push("login"); // Use absolute path
+    router.push("login");
   };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     setUser(null);
-    router.push("login"); // Use absolute path
+    router.push("login");
   };
 
   const toggleDarkMode = () => {
@@ -82,11 +109,11 @@ const HomePage = () => {
   };
 
   const handleMyPosts = () => {
-    router.push("/pages/mypost"); // Corrected path based on previous components
+    router.push("/pages/mypost");
   };
 
-  // --- Loading State ---
-  if (loading) {
+  // Loading State
+  if (loading && !isChangingPage) {
     return (
       <div
         className={`min-h-screen flex items-center justify-center transition-colors duration-300 ${
@@ -107,7 +134,7 @@ const HomePage = () => {
     );
   }
 
-  // --- Error State ---
+  // Error State
   if (error) {
     return (
       <div
@@ -125,7 +152,7 @@ const HomePage = () => {
           <h2 className="text-2xl font-bold mb-4">Error Loading Posts</h2>
           <p className="mb-6">{error}</p>
           <button
-            onClick={() => window.location.reload()} // Simple reload to retry
+            onClick={() => fetchPosts(1)}
             className={`px-6 py-3 rounded-lg text-lg font-bold shadow-md transition-all duration-300 transform hover:scale-[1.01] ${
               darkMode
                 ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-500/30"
@@ -164,7 +191,6 @@ const HomePage = () => {
                 Blogi
               </h1>
             </Link>
-            {/* Dark Mode Toggle - Moved inside the main header group */}
             <button
               onClick={toggleDarkMode}
               className={`p-3 rounded-full text-lg transition-all duration-200 ${
@@ -238,13 +264,46 @@ const HomePage = () => {
 
       {/* Main Content */}
       <main className="flex-grow max-w-7xl mx-auto px-6 py-12 md:py-16">
-        <h2
-          className={`text-4xl font-extrabold mb-10 text-center md:text-left ${
-            darkMode ? "text-indigo-400" : "text-gray-800"
-          }`}
-        >
-          Discover New Stories
-        </h2>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-10">
+          <h2
+            className={`text-4xl font-extrabold mb-6 md:mb-0 text-center md:text-left ${
+              darkMode ? "text-indigo-400" : "text-gray-800"
+            }`}
+          >
+            Discover New Stories
+          </h2>
+
+          <div className="flex items-center space-x-4 justify-center md:justify-start">
+            <span
+              className={`text-sm ${
+                darkMode ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              Showing {posts.length} of {pagination.totalPosts} posts
+            </span>
+            <select
+              value={pagination.postsPerPage}
+              onChange={handlePostsPerPageChange}
+              className={`px-3 py-1 rounded-md text-sm ${
+                darkMode
+                  ? "bg-gray-800 text-gray-200"
+                  : "bg-gray-200 text-gray-800"
+              }`}
+            >
+              <option value="5">5 per page</option>
+              <option value="10">10 per page</option>
+              <option value="20">20 per page</option>
+              <option value="50">50 per page</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Loading overlay when changing pages */}
+        {isChangingPage && (
+          <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-500"></div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
           {posts.map((post) => (
@@ -290,6 +349,145 @@ const HomePage = () => {
                 to start sharing your thoughts.
               </p>
             )}
+          </div>
+        )}
+
+        {/* Pagination Controls */}
+        {pagination.totalPages > 1 && (
+          <div
+            className={`mt-12 flex flex-col sm:flex-row items-center justify-between ${
+              darkMode ? "text-gray-300" : "text-gray-700"
+            }`}
+          >
+            <div className="mb-4 sm:mb-0">
+              <span className="text-sm">
+                Page {pagination.currentPage} of {pagination.totalPages}
+              </span>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => handlePageChange(1)}
+                disabled={!pagination.hasPreviousPage}
+                className={`px-3 py-1 rounded-md text-sm ${
+                  !pagination.hasPreviousPage
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-opacity-80"
+                } ${
+                  darkMode
+                    ? "bg-gray-800 text-gray-200"
+                    : "bg-gray-200 text-gray-800"
+                }`}
+              >
+                First
+              </button>
+
+              <button
+                onClick={() => handlePageChange(pagination.currentPage - 1)}
+                disabled={!pagination.hasPreviousPage}
+                className={`px-3 py-1 rounded-md text-sm ${
+                  !pagination.hasPreviousPage
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-opacity-80"
+                } ${
+                  darkMode
+                    ? "bg-gray-800 text-gray-200"
+                    : "bg-gray-200 text-gray-800"
+                }`}
+              >
+                Previous
+              </button>
+
+              <div className="flex space-x-1">
+                {Array.from(
+                  { length: Math.min(5, pagination.totalPages) },
+                  (_, i) => {
+                    let pageNum;
+                    if (pagination.totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (pagination.currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (
+                      pagination.currentPage >=
+                      pagination.totalPages - 2
+                    ) {
+                      pageNum = pagination.totalPages - 4 + i;
+                    } else {
+                      pageNum = pagination.currentPage - 2 + i;
+                    }
+
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`w-8 h-8 rounded-md text-sm ${
+                          pageNum === pagination.currentPage
+                            ? darkMode
+                              ? "bg-indigo-600 text-white"
+                              : "bg-indigo-500 text-white"
+                            : darkMode
+                            ? "bg-gray-800 hover:bg-gray-700"
+                            : "bg-gray-200 hover:bg-gray-300"
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  }
+                )}
+
+                {pagination.totalPages > 5 &&
+                  pagination.currentPage < pagination.totalPages - 2 && (
+                    <span className="flex items-center px-1">...</span>
+                  )}
+
+                {pagination.totalPages > 5 &&
+                  pagination.currentPage < pagination.totalPages - 2 && (
+                    <button
+                      onClick={() => handlePageChange(pagination.totalPages)}
+                      className={`w-8 h-8 rounded-md text-sm ${
+                        darkMode
+                          ? "bg-gray-800 hover:bg-gray-700"
+                          : "bg-gray-200 hover:bg-gray-300"
+                      }`}
+                    >
+                      {pagination.totalPages}
+                    </button>
+                  )}
+              </div>
+
+              <button
+                onClick={() => handlePageChange(pagination.currentPage + 1)}
+                disabled={!pagination.hasNextPage}
+                className={`px-3 py-1 rounded-md text-sm ${
+                  !pagination.hasNextPage
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-opacity-80"
+                } ${
+                  darkMode
+                    ? "bg-gray-800 text-gray-200"
+                    : "bg-gray-200 text-gray-800"
+                }`}
+              >
+                Next
+              </button>
+
+              <button
+                onClick={() => handlePageChange(pagination.totalPages)}
+                disabled={!pagination.hasNextPage}
+                className={`px-3 py-1 rounded-md text-sm ${
+                  !pagination.hasNextPage
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-opacity-80"
+                } ${
+                  darkMode
+                    ? "bg-gray-800 text-gray-200"
+                    : "bg-gray-200 text-gray-800"
+                }`}
+              >
+                Last
+              </button>
+            </div>
           </div>
         )}
       </main>

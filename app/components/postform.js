@@ -191,13 +191,12 @@ export default function PostFormPage() {
               />
               {formData.imageUrl && ( // Live image preview
                 <div className="mt-4 w-full h-48 relative rounded-lg overflow-hidden border border-gray-700">
-                  <Image
-                    src={formData.imageUrl}
+                  <img
+                    src={formData.imageUrl || "/images/placeholder.jpg"}
                     alt="Image Preview"
-                    layout="fill"
-                    objectFit="cover"
-                    className="object-center"
+                    className="w-full h-64 object-cover object-center transition-transform duration-300 hover:scale-105"
                   />
+
                   <span className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
                     Image Preview
                   </span>
