@@ -1,102 +1,301 @@
-import Image from "next/image";
+// app/pages/showoff/page.js
+"use client";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image"; // For optimized images
 
-export default function Home() {
+// Icons (using simple placeholders, replace with actual SVG/Heroicons if available)
+const FeatureIcon = ({ children }) => (
+  <div className="p-4 rounded-full bg-indigo-600 text-white flex items-center justify-center mb-4 shadow-lg">
+    {children}
+  </div>
+);
+
+export default function ShowoffPage() {
+  const router = useRouter();
+  const [darkMode, setDarkMode] = useState(true); // Default to dark mode for this page
+
+  // Optional: Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  const handleExploreClick = () => {
+    router.push("/pages/home");
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div
+      className={`min-h-screen flex flex-col transition-colors duration-300 ${
+        darkMode ? "bg-gray-950 text-gray-100" : "bg-gray-50 text-gray-800"
+      }`}
+    >
+      {/* Header (Minimal, focused on site name and dark mode toggle) */}
+      <header
+        className={`p-4 shadow-lg transition-colors duration-300 ${
+          darkMode
+            ? "bg-gray-900 border-b border-gray-800"
+            : "bg-white border-b border-gray-200"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <h1
+            className={`text-3xl font-extrabold tracking-tight ${
+              darkMode ? "text-indigo-400" : "text-indigo-600"
+            }`}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Blogi
+          </h1>
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className={`p-3 rounded-full text-lg transition-all duration-200 ${
+              darkMode
+                ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+            aria-label="Toggle dark mode"
           >
-            Read our docs
-          </a>
+            {darkMode ? "☀️" : "🌙"}
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </header>
+
+      {/* Hero Section */}
+      <section className="relative w-full py-20 md:py-32 flex items-center justify-center overflow-hidden">
+        {/* Background Overlay for Dark Mode */}
+        <div
+          className={`absolute inset-0 z-0 transition-opacity duration-300 ${
+            darkMode ? "bg-gray-900 bg-opacity-70" : "bg-white bg-opacity-70"
+          }`}
+        ></div>
+        {/* Placeholder Image or Background */}
+        <Image
+          src="/images/hero-bg.jpg" // Replace with your actual hero image path
+          alt="Blogi Background"
+          layout="fill"
+          objectFit="cover"
+          quality={80}
+          className="absolute inset-0 z-[-1]"
+        />
+
+        <div className="max-w-4xl mx-auto text-center relative z-10 px-4">
+          <h2
+            className={`text-5xl md:text-6xl font-extrabold leading-tight mb-6 animate-fade-in ${
+              darkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
+            Share Your <span className="text-indigo-500">Stories</span>.
+            Discover New <span className="text-indigo-500">Ideas</span>.
+          </h2>
+          <p
+            className={`text-xl md:text-2xl mb-10 max-w-2xl mx-auto animate-fade-in delay-200 ${
+              darkMode ? "text-gray-300" : "text-gray-700"
+            }`}
+          >
+            Blogi is your platform to connect, create, and explore. Express
+            yourself effortlessly.
+          </p>
+          <button
+            onClick={handleExploreClick}
+            className={`px-10 py-4 rounded-full text-xl font-bold shadow-lg transition-all duration-300 transform hover:scale-105 animate-fade-in delay-400
+              ${
+                darkMode
+                  ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-500/40"
+                  : "bg-indigo-500 text-white hover:bg-indigo-600 shadow-indigo-300/40"
+              }`}
+          >
+            Start Exploring →
+          </button>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 md:py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2
+            className={`text-4xl font-extrabold text-center mb-16 ${
+              darkMode ? "text-indigo-400" : "text-gray-800"
+            }`}
+          >
+            Powerful Features at Your Fingertips
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
+            {/* Feature 1 */}
+            <div
+              className={`p-8 rounded-xl shadow-lg text-center transition-colors duration-300 transform hover:scale-[1.01] ${
+                darkMode
+                  ? "bg-gray-900 border border-gray-800"
+                  : "bg-white border border-gray-200"
+              }`}
+            >
+              <FeatureIcon>✍️</FeatureIcon>
+              <h3
+                className={`text-2xl font-bold mb-3 ${
+                  darkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Effortless Creation
+              </h3>
+              <p className={darkMode ? "text-gray-400" : "text-gray-600"}>
+                Write and publish your articles with an intuitive,
+                distraction-free editor.
+              </p>
+            </div>
+
+            {/* Feature 2 */}
+            <div
+              className={`p-8 rounded-xl shadow-lg text-center transition-colors duration-300 transform hover:scale-[1.01] ${
+                darkMode
+                  ? "bg-gray-900 border border-gray-800"
+                  : "bg-white border border-gray-200"
+              }`}
+            >
+              <FeatureIcon>👁️</FeatureIcon>
+              <h3
+                className={`text-2xl font-bold mb-3 ${
+                  darkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Stunning Readability
+              </h3>
+              <p className={darkMode ? "text-gray-400" : "text-gray-600"}>
+                Posts are beautifully formatted for an optimal reading
+                experience on any device.
+              </p>
+            </div>
+
+            {/* Feature 3 */}
+            <div
+              className={`p-8 rounded-xl shadow-lg text-center transition-colors duration-300 transform hover:scale-[1.01] ${
+                darkMode
+                  ? "bg-gray-900 border border-gray-800"
+                  : "bg-white border border-gray-200"
+              }`}
+            >
+              <FeatureIcon>🌟</FeatureIcon>
+              <h3
+                className={`text-2xl font-bold mb-3 ${
+                  darkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Personalized Profile
+              </h3>
+              <p className={darkMode ? "text-gray-400" : "text-gray-600"}>
+                Manage your own posts, edit, and delete them from your dedicated
+                space.
+              </p>
+            </div>
+
+            {/* Feature 4 */}
+            <div
+              className={`p-8 rounded-xl shadow-lg text-center transition-colors duration-300 transform hover:scale-[1.01] ${
+                darkMode
+                  ? "bg-gray-900 border border-gray-800"
+                  : "bg-white border border-gray-200"
+              }`}
+            >
+              <FeatureIcon>💡</FeatureIcon>
+              <h3
+                className={`text-2xl font-bold mb-3 ${
+                  darkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Dark Mode Ready
+              </h3>
+              <p className={darkMode ? "text-gray-400" : "text-gray-600"}>
+                Switch between light and dark themes for comfortable browsing
+                day or night.
+              </p>
+            </div>
+
+            {/* Feature 5 */}
+            <div
+              className={`p-8 rounded-xl shadow-lg text-center transition-colors duration-300 transform hover:scale-[1.01] ${
+                darkMode
+                  ? "bg-gray-900 border border-gray-800"
+                  : "bg-white border border-gray-200"
+              }`}
+            >
+              <FeatureIcon>🔒</FeatureIcon>
+              <h3
+                className={`text-2xl font-bold mb-3 ${
+                  darkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Secure & Reliable
+              </h3>
+              <p className={darkMode ? "text-gray-400" : "text-gray-600"}>
+                Your data is safe with us. Focus on your content, we handle the
+                rest.
+              </p>
+            </div>
+
+            {/* Feature 6 */}
+            <div
+              className={`p-8 rounded-xl shadow-lg text-center transition-colors duration-300 transform hover:scale-[1.01] ${
+                darkMode
+                  ? "bg-gray-900 border border-gray-800"
+                  : "bg-white border border-gray-200"
+              }`}
+            >
+              <FeatureIcon>📱</FeatureIcon>
+              <h3
+                className={`text-2xl font-bold mb-3 ${
+                  darkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Fully Responsive
+              </h3>
+              <p className={darkMode ? "text-gray-400" : "text-gray-600"}>
+                Enjoy a seamless experience whether you're on desktop, tablet,
+                or mobile.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action Section */}
+      <section className="py-20 md:py-24 bg-indigo-600 dark:bg-indigo-800 text-white text-center">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-8 leading-tight">
+            Ready to Share Your Voice?
+          </h2>
+          <p className="text-xl md:text-2xl mb-12 opacity-90">
+            Join thousands of creators and start your blogging journey today.
+          </p>
+          <button
+            onClick={handleExploreClick}
+            className={`px-10 py-4 rounded-full text-xl font-bold shadow-lg transition-all duration-300 transform hover:scale-105
+              ${
+                darkMode
+                  ? "bg-white text-indigo-700 hover:bg-gray-100 shadow-indigo-200/50"
+                  : "bg-gray-900 text-white hover:bg-gray-700 shadow-gray-700/50"
+              }`}
+          >
+            Explore Blogi Now →
+          </button>
+        </div>
+      </section>
+
+      {/* Footer (Simple) */}
+      <footer
+        className={`py-8 transition-colors duration-300 ${
+          darkMode
+            ? "bg-gray-900 border-t border-gray-800"
+            : "bg-gray-100 border-t border-gray-200"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <p
+            className={`text-sm ${
+              darkMode ? "text-gray-500" : "text-gray-600"
+            }`}
+          >
+            © {new Date().getFullYear()} Blogi. All rights reserved.
+          </p>
+        </div>
       </footer>
     </div>
   );
